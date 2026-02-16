@@ -10,6 +10,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/create', role.only('commercial'), ctrl.create);
+router.post('/:id/update', role.only('commercial'), ctrl.update);
 router.post('/:id/feasibility', role.only('ops'), ctrl.feasibility);
 router.post('/:id/approve', role.only('finance'), ctrl.approve);
 router.post('/:id/activate', role.only('ops'), ctrl.activate);

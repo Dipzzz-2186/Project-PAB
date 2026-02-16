@@ -11,6 +11,19 @@ exports.create = async (req, res) => {
     res.redirect('/contracts');
 };
 
+// commercial edit contract
+exports.update = async (req, res) => {
+    const contract = await Contract.findByPk(req.params.id);
+    if (!contract) return res.status(404).send('Contract tidak ditemukan');
+
+    contract.client_name = req.body.client_name;
+    contract.price = req.body.price;
+    contract.status = req.body.status;
+
+    await contract.save();
+    res.redirect('/contracts');
+};
+
 // ops feasibility
 exports.feasibility = async (req, res) => {
     const contract = await Contract.findByPk(req.params.id);

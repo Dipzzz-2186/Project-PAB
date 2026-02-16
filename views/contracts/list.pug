@@ -53,10 +53,43 @@ block content
                     span.status-badge(class=contract.status === 'active' ? 'status-success' : contract.status === 'pending' ? 'status-warning' : 'status-danger')= contract.status
                   td= 'Rp ' + contract.price.toLocaleString('id-ID')
                   td
-                    a(href='#' style='color: #42b883; font-weight: 500;') Edit
+                    if user && user.role === 'commercial'
+                      button.edit-contract-btn(
+                        type='button'
+                        data-id=contract.id
+                        data-client=contract.client_name
+                        data-price=contract.price
+                        data-status=contract.status
+                        style='color: #42b883; font-weight: 500; background: none; border: none; cursor: pointer; padding: 0;'
+                      ) Edit
+                    else
+                      span(style='color: #9ca3af;') -
             else
               tr
                 td(colspan='5' style='text-align: center; padding: 2rem; color: #9ca3af;') Tidak ada kontrak
+
+  .modal-backdrop#editContractModal
+    .modal-card
+      .modal-header
+        h3 Edit Kontrak
+        button.modal-close-btn(type='button' id='closeEditModal' aria-label='Close') ×
+      form#editContractForm(method='post' action='/contracts/0/update')
+        .form-group
+          label(for='edit_client_name') Nama Client
+          input#edit_client_name(name='client_name' type='text' required)
+        .form-group
+          label(for='edit_price') Harga (Rp)
+          input#edit_price(name='price' type='number' min='0' required)
+        .form-group
+          label(for='edit_status') Status
+          select#edit_status(name='status' required)
+            option(value='draft') draft
+            option(value='feasible_checked') feasible_checked
+            option(value='approved') approved
+            option(value='active') active
+        .modal-actions
+          button(type='button' id='cancelEditModal') Batal
+          button(type='submit') Simpan Perubahan
   
   .card(style='margin-top: 2rem;')
     .card-header
@@ -72,3 +105,94 @@ block content
           input#price(name='price' type='number' placeholder='Masukkan harga' required)
         
         button(type='submit') Buat Kontrak
+
+  style.
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    .modal-backdrop.show {
+      display: flex;
+    }
+    .modal-card {
+      width: 100%;
+      max-width: 520px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      padding: 1.25rem;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      color: #6b7280;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .modal-actions button[type='button'] {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+  script.
+    (function () {
+      const modal = document.getElementById('editContractModal');
+      const form = document.getElementById('editContractForm');
+      const closeBtn = document.getElementById('closeEditModal');
+      const cancelBtn = document.getElementById('cancelEditModal');
+      const clientInput = document.getElementById('edit_client_name');
+      const priceInput = document.getElementById('edit_price');
+      const statusInput = document.getElementById('edit_status');
+      const openButtons = document.querySelectorAll('.edit-contract-btn');
+
+      if (!modal || !form) return;
+
+      const closeModal = function () {
+        modal.classList.remove('show');
+      };
+
+      openButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          const contractId = button.dataset.id;
+          form.action = '/contracts/' + contractId + '/update';
+          clientInput.value = button.dataset.client || '';
+          priceInput.value = button.dataset.price || '';
+          statusInput.value = button.dataset.status || 'draft';
+          modal.classList.add('show');
+        });
+      });
+
+      closeBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', function (event) {
+        if (event.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal.classList.contains('show')) {
+          closeModal();
+        }
+      });
+    })();
