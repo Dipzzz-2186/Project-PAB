@@ -49,8 +49,8 @@ block content
               polyline(points='22 7 13.5 15.5 8.5 10.5 2 17')
               polyline(points='16 7 22 7 22 13')
           .card-content
-            .stats-value 89
-            p.stats-change +23% from last month
+            .stats-value= activeContracts
+            p.stats-change dari total #{totalContracts} kontrak
         
         .card
           .card-header.flex-row
@@ -104,6 +104,16 @@ block content
               polyline(points='21 3 21 9 15 9')
           .card-content
             .stats-value 10
+
+      .card
+        .card-header.flex-row
+          h3.card-title Total Nilai Kontrak
+          svg(width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' style='color: var(--muted-foreground);')
+            rect(x='1' y='4' width='22' height='16' rx='2' ry='2')
+            line(x1='1' y1='10' x2='23' y2='10')
+        .card-content
+          .stats-value= 'Rp ' + totalContractValue.toLocaleString('id-ID')
+          p.stats-change akumulasi semua kontrak
       
       // Chart
       .card
@@ -117,29 +127,28 @@ block content
       .grid.grid-cols-2
         .card
           .card-header
-            h3.card-title Recent Activity
+            h3.card-title Kontrak Terbaru
           .card-content
-            .activity-feed
-              .activity-item
-                .activity-dot
-                .activity-content
-                  p.activity-title New Report added
-                  p.activity-description John Doe from Acme Corp
-                  p.activity-time 2 hours ago
-              
-              .activity-item
-                .activity-dot
-                .activity-content
-                  p.activity-title Deal closed
-                  p.activity-description $45,000 deal with Tech Solutions
-                  p.activity-time 5 hours ago
-              
-              .activity-item
-                .activity-dot
-                .activity-content
-                  p.activity-title Task completed
-                  p.activity-description Follow-up call with Jane Smith
-                  p.activity-time 1 day ago
+            .table-wrapper
+              table.report-table
+                thead
+                  tr
+                    th No
+                    th Client
+                    th Status
+                    th Harga
+                tbody
+                  if recentContracts && recentContracts.length > 0
+                    each contract, index in recentContracts
+                      tr
+                        td= index + 1
+                        td= contract.client_name
+                        td
+                          span.status-badge(class=contract.status === 'active' ? 'status-success' : contract.status === 'pending' ? 'status-warning' : 'status-danger')= contract.status
+                        td= 'Rp ' + (contract.price || 0).toLocaleString('id-ID')
+                  else
+                    tr
+                      td(colspan='4' style='text-align: center; padding: 1rem; color: #9ca3af;') Belum ada kontrak
         
         .card
           .card-header
