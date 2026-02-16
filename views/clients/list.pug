@@ -1,0 +1,36 @@
+extends ../layout
+
+block page_config
+  - var activePage = 'clients'
+  - var searchPlaceholder = 'Cari client...'
+
+block content
+  .page-header
+    h1.page-title Master Client
+    p.page-subtitle Ringkasan client dari report Commercial
+
+  .card
+    .card-header
+      h3.card-title Daftar Client
+    .card-content
+      .table-wrapper
+        table.report-table
+          thead
+            tr
+              th No
+              th Client
+              th Jumlah Kontrak
+              th Nilai Total
+              th Status Terakhir
+          tbody
+            if data && data.length
+              each row, idx in data
+                tr
+                  td= idx + 1
+                  td= row.name
+                  td= row.totalContracts
+                  td= 'Rp ' + row.totalValue.toLocaleString('id-ID')
+                  td= row.latestStatus
+            else
+              tr
+                td(colspan='5' style='text-align:center; padding:1.5rem; color:#9ca3af;') Belum ada data client

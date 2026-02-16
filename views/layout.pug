@@ -30,7 +30,7 @@ html
               rect(x='3' y='14' width='7' height='7')
             span.nav-text Dashboard
 
-          a.nav-item(href='#' data-page='companies')
+          a.nav-item(class=activePage === 'clients' ? 'active' : '', href='/clients', data-page='clients')
             svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
               path(d='M3 21h18')
               path(d='M9 8h1')
@@ -42,7 +42,7 @@ html
               path(d='M6 4h12v17H6z')
             span.nav-text Master Client
 
-          a.nav-item(href='#' data-page='cars')
+          a.nav-item(class=activePage === 'cars' ? 'active' : '', href='/cars', data-page='cars')
             svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
               circle(cx='12' cy='12' r='8')
               circle(cx='12' cy='12' r='3')

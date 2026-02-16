@@ -75,7 +75,11 @@ block content
           thead
             tr
               th No
+              th No Kontrak
               th Client
+              th Brand / Tipe
+              th Nopol
+              th Unit
               th Harga
               th Tahap Saat Ini
               th Role Tahap
@@ -85,7 +89,11 @@ block content
               each contract, index in data
                 tr
                   td= index + 1
+                  td= contract.contract_number || '-'
                   td= contract.client_name
+                  td= (contract.brand || '-') + ' / ' + (contract.car_type || '-')
+                  td= contract.plate_number || '-'
+                  td= contract.unit_count || '-'
                   td= 'Rp ' + Number(contract.price || 0).toLocaleString('id-ID')
                   td= contract.stageLabel
                   td
@@ -107,18 +115,63 @@ block content
       .card-header
         h3.card-title Buat Kontrak Baru
       .card-content
-        form(method='post' action='/contracts/create' style='max-width: 560px;')
+        form(method='post' action='/contracts/create' style='max-width: 720px;')
           .form-group
             label(for='client_name') Nama Client
             input#client_name(name='client_name' type='text' placeholder='Masukkan nama client' required)
           .form-group
-            label(for='price') Harga (Rp)
-            input#price(name='price' type='number' min='0' placeholder='Masukkan harga' required)
+            label(for='contract_number') Nomor Kontrak
+            input#contract_number(name='contract_number' type='text' placeholder='CN-001/IV/2026')
           .grid.grid-cols-2
+            .form-group
+              label(for='brand') Brand
+              input#brand(name='brand' type='text' placeholder='Toyota')
+            .form-group
+              label(for='car_type') Tipe
+              input#car_type(name='car_type' type='text' placeholder='Innova Zenix 2.0 Q HV CVT')
+          .grid.grid-cols-2
+            .form-group
+              label(for='plate_number') Nopol
+              input#plate_number(name='plate_number' type='text' placeholder='B 1234 ABC')
+            .form-group
+              label(for='unit_count') Jumlah Unit
+              input#unit_count(name='unit_count' type='number' min='1' placeholder='1')
+          .grid.grid-cols-2
+            .form-group
+              label(for='year') Tahun
+              input#year(name='year' type='text' placeholder='2024')
             .form-group
               label(for='start_date') Tanggal Mulai
               input#start_date(name='start_date' type='date')
+          .grid.grid-cols-2
             .form-group
               label(for='end_date') Tanggal Berakhir
               input#end_date(name='end_date' type='date')
+            .form-group
+              label(for='branch') Cabang / Project
+              input#branch(name='branch' type='text' placeholder='Jakarta / Project X')
+          .grid.grid-cols-2
+            .form-group
+              label(for='area') Area / Wilayah
+              input#area(name='area' type='text' placeholder='Jabodetabek')
+            .form-group
+              label(for='pic') PIC Client
+              input#pic(name='pic' type='text' placeholder='Nama PIC')
+          .grid.grid-cols-2
+            .form-group
+              label(for='base_price') Harga Sewa (Rp)
+              input#base_price(name='base_price' type='number' min='0' placeholder='15000000')
+            .form-group
+              label(for='ppn') PPN (Rp)
+              input#ppn(name='ppn' type='number' min='0' placeholder='1500000')
+          .grid.grid-cols-2
+            .form-group
+              label(for='price') Total Harga Kontrak (Rp)
+              input#price(name='price' type='number' min='0' placeholder='16500000' required)
+            .form-group
+              label(for='total_price') Total Harga + PPN (opsional)
+              input#total_price(name='total_price' type='number' min='0' placeholder='16500000')
+          .form-group
+            label(for='notes') Catatan
+            textarea#notes(name='notes' placeholder='Tambahkan catatan atau kebutuhan armada')
           button(type='submit') Buat Kontrak

@@ -1,0 +1,16 @@
+extends ../layout
+
+block page_config
+  - var activePage = 'cars'
+  - var searchPlaceholder = 'Master Car'
+
+block content
+  .page-header
+    h1.page-title Master Car
+    p.page-subtitle Placeholder. Data unit kendaraan belum disimpan di kontrak.
+
+  .card
+    .card-header
+      h3.card-title Info
+    .card-content
+      p Saat ini kontrak belum menyimpan detail kendaraan. Tambahkan kolom kendaraan pada kontrak bila diperlukan, lalu tampilkan di halaman ini.

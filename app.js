@@ -26,6 +26,8 @@ app.get('/', (req, res) => {
 app.use('/', require('./routes/auth.routes'));
 app.use('/dashboard', require('./routes/dashboard.routes'));
 app.use('/contracts', require('./routes/contract.routes'));
+app.use('/clients', require('./routes/clients.routes'));
+app.use('/cars', require('./routes/cars.routes'));
 
 const { sequelize } = require('./models');
 
