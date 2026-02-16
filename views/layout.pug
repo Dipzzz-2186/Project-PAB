@@ -6,6 +6,148 @@ html
     title Transport System
     link(rel='stylesheet' href='/css/styles.css')
   body
-    block content
+    block page_config
+      - var activePage = 'dashboard'
+      - var searchPlaceholder = 'Search...'
+
+    .app-container
+      .overlay#overlay
+
+      // Sidebar
+      aside.sidebar#sidebar
+        .sidebar-header
+          h3.sidebar-title#sidebarTitle Transport System
+          button.toggle-btn.desktop-menu-btn#toggleSidebarDesktop(aria-label='Toggle sidebar')
+            svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+              path(d='M15 18l-6-6 6-6')
+
+        nav.sidebar-nav#sidebarNav
+          a.nav-item(class=activePage === 'dashboard' ? 'active' : '', href='/dashboard', data-page='dashboard')
+            svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+              rect(x='3' y='3' width='7' height='7')
+              rect(x='14' y='3' width='7' height='7')
+              rect(x='14' y='14' width='7' height='7')
+              rect(x='3' y='14' width='7' height='7')
+            span.nav-text Dashboard
+
+          a.nav-item(href='#' data-page='companies')
+            svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+              path(d='M3 21h18')
+              path(d='M9 8h1')
+              path(d='M9 12h1')
+              path(d='M9 16h1')
+              path(d='M14 8h1')
+              path(d='M14 12h1')
+              path(d='M14 16h1')
+              path(d='M6 4h12v17H6z')
+            span.nav-text Master Client
+
+          a.nav-item(href='#' data-page='cars')
+            svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+              circle(cx='12' cy='12' r='8')
+              circle(cx='12' cy='12' r='3')
+              path(d='M12 5v2')
+              path(d='M12 19v2')
+              path(d='M5 12h2')
+              path(d='M19 12h2')
+              path(d='M7.05 7.05l1.41 1.41')
+              path(d='M15.54 15.54l1.41 1.41')
+            span.nav-text Master Car
+
+          a.nav-item(href='#' data-page='vendors')
+            svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+              path(d='M3 21h18')
+              path(d='M9 8h1')
+              path(d='M9 12h1')
+              path(d='M9 16h1')
+              path(d='M14 8h1')
+              path(d='M14 12h1')
+              path(d='M14 16h1')
+              path(d='M6 4h12v17H6z')
+            span.nav-text List Vendor
+
+          a.nav-item(class=activePage === 'deals' ? 'active' : '', href='/contracts', data-page='deals')
+            svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+              polyline(points='22 7 13.5 15.5 8.5 10.5 2 17')
+              polyline(points='16 7 22 7 22 13')
+            span.nav-text Contract Deals
+
+          a.nav-item(href='#' data-page='reports')
+            svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+              line(x1='12' y1='20' x2='12' y2='10')
+              line(x1='18' y1='20' x2='18' y2='4')
+              line(x1='6' y1='20' x2='6' y2='16')
+            span.nav-text Reports
+
+          a.nav-item(href='#' data-page='billing')
+            svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+              rect(x='1' y='4' width='22' height='16' rx='2' ry='2')
+              line(x1='1' y1='10' x2='23' y2='10')
+            span.nav-text Billing
+
+          a.nav-item(href='#' data-page='settings')
+            svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+              circle(cx='12' cy='12' r='3')
+              path(d='M12 1v6m0 6v6m5.2-13L13 9.8M10 13l-4.2 4.2M23 12h-6m-6 0H1m18-5.2L13 10.2M10 13l-4.2 4.2')
+            span.nav-text Settings
+
+      // Main Content
+      .main-content#mainContent
+        // Navbar
+        nav.navbar
+          .navbar-content
+            .navbar-left
+              button.toggle-btn.mobile-menu-btn#toggleSidebarMobile(aria-label='Toggle menu' style='display: none;')
+                svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+                  line(x1='3' y1='12' x2='21' y2='12')
+                  line(x1='3' y1='6' x2='21' y2='6')
+                  line(x1='3' y1='18' x2='21' y2='18')
+
+              form.search-form#searchForm
+                svg.search-icon(width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+                  circle(cx='11' cy='11' r='8')
+                  path(d='m21 21-4.35-4.35')
+                input.search-input#searchInput(type='search' placeholder=searchPlaceholder)
+
+            .navbar-right
+              button.toggle-btn.desktop-menu-btn#toggleSidebarNav(aria-label='Toggle sidebar')
+                svg(width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+                  line(x1='3' y1='12' x2='21' y2='12')
+                  line(x1='3' y1='6' x2='21' y2='6')
+                  line(x1='3' y1='18' x2='21' y2='18')
+
+              .dropdown
+                button.account-btn#accountBtn(aria-label='Account menu')
+                  .avatar
+                    svg(width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+                      path(d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2')
+                      circle(cx='12' cy='7' r='4')
+                  span.account-text(style='font-size: 0.875rem; font-weight: 500;') #{user.name}
+                  svg.account-text(width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+                    path(d='m6 9 6 6 6-6')
+
+                .dropdown-menu#accountDropdown
+                  .dropdown-header
+                    p(style='font-size: 0.875rem; font-weight: 500;') #{user.name}
+                    p(style='font-size: 0.75rem; color: var(--muted-foreground);') #{user.email}
+                  button.dropdown-item
+                    svg(width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+                      rect(x='3' y='11' width='18' height='11' rx='2' ry='2')
+                      path(d='M7 11V7a5 5 0 0 1 10 0v4')
+                    span Change Password
+                  a.dropdown-item.logout(href='/logout' style='color: #dc2626; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-size: 0.875rem; transition: background-color 0.2s; text-decoration: none;')
+                    svg(width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2')
+                      path(d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4')
+                      polyline(points='16 17 21 12 16 7')
+                      line(x1='21' y1='12' x2='9' y2='12')
+                    span Logout
+
+        // Page Content
+        main.content
+          block content
+
+        // Footer
+        footer.footer
+          p &copy; 2024 Transport Management System. All rights reserved.
     script(src='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js')
     script(src='/js/dashboard.js')
