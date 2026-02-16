@@ -2,37 +2,73 @@ extends ../layout
 
 block page_config
   - var activePage = 'deals'
-  - var searchPlaceholder = 'Search contracts...'
+  - var searchPlaceholder = 'Cari kontrak...'
 
 block content
   .page-header
-    h1.page-title Contract Management
-    p.page-subtitle Kelola semua kontrak penyewaan kendaraan Anda
-  
-  .grid.grid-cols-2(style='margin-bottom: 2rem;')
+    h1.page-title Contract Workflow Pipeline
+    p.page-subtitle Implementasi proses seperti diagram: Commercial/Sales -> Operational Lead -> Finance -> renewal.
+
+  .grid.grid-cols-4(style='margin-bottom: 1rem;')
     .card
-      .card-header.flex-row
-        h3.card-title Total Kontrak
-        svg(width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' style='color: var(--muted-foreground);')
-          polyline(points='22 7 13.5 15.5 8.5 10.5 2 17')
-          polyline(points='16 7 22 7 22 13')
+      .card-header
+        h3.card-title Operational Lead
       .card-content
-        .stats-value= data.length
-        p.stats-change Semua kontrak aktif
-    
+        .stats-value= laneCounts.ops || 0
+        p.stats-change Tahap operasional
     .card
-      .card-header.flex-row
-        h3.card-title Total Nilai Kontrak
-        svg(width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' style='color: var(--muted-foreground);')
-          rect(x='1' y='4' width='22' height='16' rx='2' ry='2')
-          line(x1='1' y1='10' x2='23' y2='10')
+      .card-header
+        h3.card-title Commercial / Sales
       .card-content
-        .stats-value= 'Rp ' + data.reduce((a,b) => a + b.price, 0).toLocaleString('id-ID')
-        p.stats-change Total nilai semua kontrak
-  
+        .stats-value= laneCounts.commercial || 0
+        p.stats-change Tahap sales & renewal
+    .card
+      .card-header
+        h3.card-title Finance
+      .card-content
+        .stats-value= laneCounts.finance || 0
+        p.stats-change Tahap approval & billing
+    .card
+      .card-header
+        h3.card-title Super Admin
+      .card-content
+        .stats-value= laneCounts.super_admin || 0
+        p.stats-change Monitoring seluruh proses
+
+  .card(style='margin-bottom: 1rem;')
+    .card-header
+      h3.card-title Peta Alur Proses
+    .card-content
+      .workflow-lanes
+        .workflow-lane
+          h4.workflow-lane-title Operational Lead
+          ul.workflow-list
+            each stage in stages
+              if stage.lane === 'ops'
+                li= stage.label
+        .workflow-lane
+          h4.workflow-lane-title Commercial / Sales
+          ul.workflow-list
+            each stage in stages
+              if stage.lane === 'commercial'
+                li= stage.label
+        .workflow-lane
+          h4.workflow-lane-title Finance
+          ul.workflow-list
+            each stage in stages
+              if stage.lane === 'finance'
+                li= stage.label
+        .workflow-lane
+          h4.workflow-lane-title Super Admin
+          ul.workflow-list
+            li Login
+            li Dashboard
+            li Buat Akun
+            li Monitoring Seluruh Proses
+
   .card
     .card-header
-      h3.card-title Daftar Kontrak Aktif
+      h3.card-title Daftar Kontrak & Aksi Tahap
     .card-content
       .table-wrapper
         table.report-table
@@ -40,159 +76,49 @@ block content
             tr
               th No
               th Client
-              th Status
               th Harga
-              th Action
+              th Tahap Saat Ini
+              th Role Tahap
+              th Aksi
           tbody
             if data && data.length > 0
               each contract, index in data
                 tr
                   td= index + 1
                   td= contract.client_name
+                  td= 'Rp ' + Number(contract.price || 0).toLocaleString('id-ID')
+                  td= contract.stageLabel
                   td
-                    span.status-badge(class=contract.status === 'active' ? 'status-success' : contract.status === 'pending' ? 'status-warning' : 'status-danger')= contract.status
-                  td= 'Rp ' + contract.price.toLocaleString('id-ID')
+                    span.status-badge(
+                      class=contract.stageLane === 'ops' ? 'status-warning' : contract.stageLane === 'finance' ? 'status-danger' : 'status-success'
+                    )= contract.stageLane
                   td
-                    if user && user.role === 'commercial'
-                      button.edit-contract-btn(
-                        type='button'
-                        data-id=contract.id
-                        data-client=contract.client_name
-                        data-price=contract.price
-                        data-status=contract.status
-                        style='color: #42b883; font-weight: 500; background: none; border: none; cursor: pointer; padding: 0;'
-                      ) Edit
+                    if contract.allowedAction
+                      form(method='post' action=`/contracts/${contract.id}/action/${contract.allowedAction.actionKey}`)
+                        button(type='submit')= contract.allowedAction.label
                     else
-                      span(style='color: #9ca3af;') -
+                      span.stats-change Tidak ada aksi
             else
               tr
-                td(colspan='5' style='text-align: center; padding: 2rem; color: #9ca3af;') Tidak ada kontrak
+                td(colspan='6' style='text-align: center; padding: 2rem; color: #9ca3af;') Belum ada kontrak
 
-  .modal-backdrop#editContractModal
-    .modal-card
-      .modal-header
-        h3 Edit Kontrak
-        button.modal-close-btn(type='button' id='closeEditModal' aria-label='Close') ×
-      form#editContractForm(method='post' action='/contracts/0/update')
-        .form-group
-          label(for='edit_client_name') Nama Client
-          input#edit_client_name(name='client_name' type='text' required)
-        .form-group
-          label(for='edit_price') Harga (Rp)
-          input#edit_price(name='price' type='number' min='0' required)
-        .form-group
-          label(for='edit_status') Status
-          select#edit_status(name='status' required)
-            option(value='draft') draft
-            option(value='feasible_checked') feasible_checked
-            option(value='approved') approved
-            option(value='active') active
-        .modal-actions
-          button(type='button' id='cancelEditModal') Batal
-          button(type='submit') Simpan Perubahan
-  
-  .card(style='margin-top: 2rem;')
-    .card-header
-      h3.card-title Buat Kontrak Baru
-    .card-content
-      form(method='post' action='/contracts/create' style='max-width: 500px;')
-        .form-group
-          label(for='client_name') Nama Client
-          input#client_name(name='client_name' type='text' placeholder='Masukkan nama client' required)
-        
-        .form-group
-          label(for='price') Harga (Rp)
-          input#price(name='price' type='number' placeholder='Masukkan harga' required)
-        
-        button(type='submit') Buat Kontrak
-
-  style.
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 1rem;
-    }
-    .modal-backdrop.show {
-      display: flex;
-    }
-    .modal-card {
-      width: 100%;
-      max-width: 520px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-      padding: 1.25rem;
-    }
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-    .modal-header h3 {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-    .modal-close-btn {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      line-height: 1;
-      color: #6b7280;
-    }
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-    .modal-actions button[type='button'] {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-  script.
-    (function () {
-      const modal = document.getElementById('editContractModal');
-      const form = document.getElementById('editContractForm');
-      const closeBtn = document.getElementById('closeEditModal');
-      const cancelBtn = document.getElementById('cancelEditModal');
-      const clientInput = document.getElementById('edit_client_name');
-      const priceInput = document.getElementById('edit_price');
-      const statusInput = document.getElementById('edit_status');
-      const openButtons = document.querySelectorAll('.edit-contract-btn');
-
-      if (!modal || !form) return;
-
-      const closeModal = function () {
-        modal.classList.remove('show');
-      };
-
-      openButtons.forEach(function (button) {
-        button.addEventListener('click', function () {
-          const contractId = button.dataset.id;
-          form.action = '/contracts/' + contractId + '/update';
-          clientInput.value = button.dataset.client || '';
-          priceInput.value = button.dataset.price || '';
-          statusInput.value = button.dataset.status || 'draft';
-          modal.classList.add('show');
-        });
-      });
-
-      closeBtn.addEventListener('click', closeModal);
-      cancelBtn.addEventListener('click', closeModal);
-      modal.addEventListener('click', function (event) {
-        if (event.target === modal) closeModal();
-      });
-      document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && modal.classList.contains('show')) {
-          closeModal();
-        }
-      });
-    })();
+  if user.role === 'commercial' || user.role === 'super_admin'
+    .card(style='margin-top: 1rem;')
+      .card-header
+        h3.card-title Buat Kontrak Baru
+      .card-content
+        form(method='post' action='/contracts/create' style='max-width: 560px;')
+          .form-group
+            label(for='client_name') Nama Client
+            input#client_name(name='client_name' type='text' placeholder='Masukkan nama client' required)
+          .form-group
+            label(for='price') Harga (Rp)
+            input#price(name='price' type='number' min='0' placeholder='Masukkan harga' required)
+          .grid.grid-cols-2
+            .form-group
+              label(for='start_date') Tanggal Mulai
+              input#start_date(name='start_date' type='date')
+            .form-group
+              label(for='end_date') Tanggal Berakhir
+              input#end_date(name='end_date' type='date')
+          button(type='submit') Buat Kontrak

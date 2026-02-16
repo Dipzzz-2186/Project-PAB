@@ -438,6 +438,10 @@ body {
     grid-template-columns: repeat(2, 1fr);
 }
 
+.grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
 /* Chart Container */
 .chart-container {
     height: 300px;
@@ -492,6 +496,11 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+}
+
+.task-item-column {
+    align-items: flex-start;
+    justify-content: space-between;
 }
 
 .task-checkbox {
@@ -584,12 +593,20 @@ body {
         grid-template-columns: 1fr;
     }
 
+    .grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+
     .content {
         padding: 1rem;
     }
 
     .search-input {
         width: 100%;
+    }
+
+    .workflow-lanes {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -691,4 +708,65 @@ button[type='submit']:hover,
 button[type='submit']:active,
 .btn-submit:active {
     transform: translateY(0);
+}
+
+.btn-secondary {
+    display: inline-block;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    text-decoration: none;
+    padding: 0.45rem 0.8rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.btn-secondary:hover {
+    background-color: var(--accent);
+}
+
+.workflow-lanes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.workflow-lane {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--secondary);
+    padding: 0.75rem;
+}
+
+.workflow-lane-title {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+}
+
+.workflow-list {
+    margin: 0;
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.8125rem;
+}
+
+.alert {
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+.alert-success {
+    border: 1px solid #10b98140;
+    background: #10b9811f;
+    color: #065f46;
+}
+
+.alert-danger {
+    border: 1px solid #ef444440;
+    background: #ef44441a;
+    color: #991b1b;
 }
