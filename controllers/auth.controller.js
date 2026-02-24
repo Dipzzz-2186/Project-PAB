@@ -3,15 +3,24 @@ const { User } = require('../models');
 const { normalizeRole } = require('../utils/workflow');
 
 exports.loginPage = (req, res) => {
-    res.render('login');
+    res.render('login', {
+        error: String(req.query.error || '')
+    });
 };
 
 exports.login = async (req, res) => {
-    const user = await User.findOne({ where: { email: req.body.email } });
-    if (!user) return res.send('User tidak ada');
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const password = String(req.body.password || '');
 
-    const match = await bcrypt.compare(req.body.password, user.password);
-    if (!match) return res.send('Password salah');
+    if (!email || !password) {
+        return res.redirect('/login?error=Email%20dan%20password%20wajib%20diisi');
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.redirect('/login?error=User%20tidak%20ada');
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.redirect('/login?error=Password%20salah');
 
     req.session.user = {
         id: user.id,
