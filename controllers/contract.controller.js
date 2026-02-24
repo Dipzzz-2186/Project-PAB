@@ -55,7 +55,7 @@ exports.create = async (req, res) => {
     notes: req.body.notes || null,
     start_date: req.body.start_date || null,
     end_date: req.body.end_date || null,
-    status: 'draft'
+    status: 'reported_by_sales'
   });
 
   res.redirect('/contracts');

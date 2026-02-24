@@ -25,6 +25,17 @@ router.get('/', async (req, res) => {
         })
         .filter(Boolean);
 
+    const notifications = ['ops', 'finance'].includes(role)
+        ? contracts
+            .filter((item) => item.status === 'reported_by_sales')
+            .map((item) => ({
+                id: item.id,
+                client_name: item.client_name,
+                contract_number: item.contract_number || '-',
+                created_at: item.created_at
+            }))
+        : [];
+
     res.render('dashboard', {
         user: req.session.user,
         role,
@@ -32,6 +43,7 @@ router.get('/', async (req, res) => {
         activeContracts,
         totalContractValue,
         todo,
+        notifications,
         success: req.query.success || null,
         error: req.query.error || null
     });

@@ -64,6 +64,21 @@ block content
                 p.task-time Buat akun untuk Commercial, Operational, atau Finance
               a.btn-secondary(href='#akun-baru') Buka
 
+  if (role === 'ops' || role === 'finance') && notifications && notifications.length
+    .card(style='margin-top: 1rem;')
+      .card-header
+        h3.card-title Notifikasi Kontrak Baru dari Commercial
+      .card-content
+        .alert.alert-danger(style='margin-bottom: .75rem;')
+          | Perhatian: Ada #{notifications.length} kontrak penting yang harus segera ditindaklanjuti.
+        .task-list
+          each item in notifications
+            .task-item.task-item-urgent
+              .task-content
+                p.task-title= item.client_name
+                p.task-time Kontrak: #{item.contract_number}
+              a.btn-secondary(href='/contracts') Lihat
+
   if role === 'super_admin'
     .card(style='margin-top: 1rem;' id='akun-baru')
       .card-header
