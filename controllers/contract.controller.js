@@ -33,6 +33,10 @@ exports.list = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
+  if (normalizeRole(req.session?.user?.role) !== 'commercial') {
+    return res.status(403).send('Unauthorized');
+  }
+
   await Contract.create({
     client_name: req.body.client_name,
     price: Number(req.body.price || 0),
