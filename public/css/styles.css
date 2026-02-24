@@ -802,3 +802,74 @@ button[type='submit']:active,
     background: #ef44441a;
     color: #991b1b;
 }
+
+.feasibility-modal {
+    width: min(560px, calc(100vw - 2rem));
+    max-height: 85vh;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    border: none;
+    border-radius: 0.85rem;
+    padding: 0;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
+    overflow: hidden;
+}
+
+.feasibility-modal::backdrop {
+    background: rgba(15, 23, 42, 0.5);
+}
+
+.feasibility-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f8fafc;
+}
+
+.feasibility-modal__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.feasibility-modal__close {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    background: #fff;
+    color: #334155;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feasibility-modal__close:hover {
+    background: #f1f5f9;
+}
+
+.feasibility-modal__meta {
+    margin: 0;
+    padding: 0.9rem 1.25rem 0 1.25rem;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.feasibility-modal__form {
+    padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+}
+
+.feasibility-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.25rem;
+}

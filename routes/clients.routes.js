@@ -1,9 +1,8 @@
 const router = require('express').Router();
 const { Contract } = require('../models');
+const role = require('../middlewares/role.middleware');
 
-router.get('/', async (req, res) => {
-  if (!req.session.user) return res.redirect('/login');
-
+router.get('/', role.only('super_admin'), async (req, res) => {
   const contracts = await Contract.findAll();
   const clients = {};
 

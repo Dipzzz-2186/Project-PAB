@@ -30,9 +30,8 @@ const LEGACY_STATUS_MAP = {
 
 const ACTIONS = {
   report_contract: { label: 'Report Contract', role: 'commercial', from: 'draft', to: 'reported_by_sales' },
-  receive_sales_contract_ops: { label: 'Terima Notif Contract', role: 'ops', from: 'reported_by_sales', to: 'ops_notified' },
-  submit_feasibility: { label: 'Ajukan Feasibility', role: 'ops', from: 'ops_notified', to: 'ops_feasibility_submitted' },
-  receive_sales_contract_finance: { label: 'Terima Notif Contract', role: 'finance', from: 'ops_feasibility_submitted', to: 'finance_notified' },
+  submit_feasibility: { label: 'Ajukan Feasibility', role: 'ops', from: 'reported_by_sales', to: 'finance_notified' },
+  submit_feasibility_legacy: { label: 'Ajukan Feasibility', role: 'ops', from: 'ops_notified', to: 'finance_notified' },
   approve_contract_price: { label: 'Setujui Contract & Harga', role: 'finance', from: 'finance_notified', to: 'finance_approved' },
   prepare_unit: { label: 'Persiapkan Unit', role: 'ops', from: 'finance_approved', to: 'unit_prepared' },
   report_handover: { label: 'Report Serah Terima', role: 'ops', from: 'unit_prepared', to: 'handover_reported' },

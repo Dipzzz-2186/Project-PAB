@@ -102,8 +102,16 @@ block content
                     )= contract.stageLane
                   td
                     if contract.allowedAction
-                      form(method='post' action=`/contracts/${contract.id}/action/${contract.allowedAction.actionKey}`)
-                        button(type='submit')= contract.allowedAction.label
+                      if contract.allowedAction.actionKey === 'submit_feasibility' || contract.allowedAction.actionKey === 'submit_feasibility_legacy'
+                        button(
+                          type='button'
+                          class='btn-secondary open-feasibility-modal'
+                          data-action=`/contracts/${contract.id}/action/${contract.allowedAction.actionKey}`
+                          data-client=contract.client_name
+                        )= contract.allowedAction.label
+                      else
+                        form(method='post' action=`/contracts/${contract.id}/action/${contract.allowedAction.actionKey}`)
+                          button(type='submit')= contract.allowedAction.label
                     else
                       span.stats-change Tidak ada aksi
             else
@@ -118,21 +126,21 @@ block content
         form(method='post' action='/contracts/create' style='max-width: 720px;')
           .form-group
             label(for='client_name') Nama Client
-            input#client_name(name='client_name' type='text' placeholder='Masukkan nama client' required)
+            input#client_name(name='client_name' type='text' placeholder='Masukkan nama client' required list='clients-list')
           .form-group
             label(for='contract_number') Nomor Kontrak
             input#contract_number(name='contract_number' type='text' placeholder='CN-001/IV/2026')
           .grid.grid-cols-2
             .form-group
               label(for='brand') Brand
-              input#brand(name='brand' type='text' placeholder='Toyota')
+              input#brand(name='brand' type='text' placeholder='Toyota' list='brands-list')
             .form-group
               label(for='car_type') Tipe
-              input#car_type(name='car_type' type='text' placeholder='Innova Zenix 2.0 Q HV CVT')
+              input#car_type(name='car_type' type='text' placeholder='Innova Zenix 2.0 Q HV CVT' list='car-types-list')
           .grid.grid-cols-2
             .form-group
               label(for='plate_number') Nopol
-              input#plate_number(name='plate_number' type='text' placeholder='B 1234 ABC')
+              input#plate_number(name='plate_number' type='text' placeholder='B 1234 ABC' list='plates-list')
             .form-group
               label(for='unit_count') Jumlah Unit
               input#unit_count(name='unit_count' type='number' min='1' placeholder='1')
@@ -149,29 +157,123 @@ block content
               input#end_date(name='end_date' type='date')
             .form-group
               label(for='branch') Cabang / Project
-              input#branch(name='branch' type='text' placeholder='Jakarta / Project X')
+              input#branch(name='branch' type='text' placeholder='Jakarta / Project X' list='branches-list')
           .grid.grid-cols-2
             .form-group
               label(for='area') Area / Wilayah
-              input#area(name='area' type='text' placeholder='Jabodetabek')
+              input#area(name='area' type='text' placeholder='Jabodetabek' list='areas-list')
             .form-group
               label(for='pic') PIC Client
-              input#pic(name='pic' type='text' placeholder='Nama PIC')
+              input#pic(name='pic' type='text' placeholder='Nama PIC' list='pics-list')
           .grid.grid-cols-2
             .form-group
               label(for='base_price') Harga Sewa (Rp)
-              input#base_price(name='base_price' type='number' min='0' placeholder='15000000')
+              input#base_price(name='base_price' type='text' inputmode='numeric' autocomplete='off' placeholder='15.000.000' data-rupiah='true')
             .form-group
               label(for='ppn') PPN (Rp)
-              input#ppn(name='ppn' type='number' min='0' placeholder='1500000')
+              input#ppn(name='ppn' type='text' inputmode='numeric' autocomplete='off' placeholder='1.500.000' data-rupiah='true')
           .grid.grid-cols-2
             .form-group
               label(for='price') Total Harga Kontrak (Rp)
-              input#price(name='price' type='number' min='0' placeholder='16500000' required)
+              input#price(name='price' type='text' inputmode='numeric' autocomplete='off' placeholder='16.500.000' required data-rupiah='true')
             .form-group
               label(for='total_price') Total Harga + PPN (opsional)
-              input#total_price(name='total_price' type='number' min='0' placeholder='16500000')
+              input#total_price(name='total_price' type='text' inputmode='numeric' autocomplete='off' placeholder='16.500.000' data-rupiah='true')
           .form-group
             label(for='notes') Catatan
             textarea#notes(name='notes' placeholder='Tambahkan catatan atau kebutuhan armada')
           button(type='submit') Buat Kontrak
+
+        datalist#clients-list
+          each val in (autocomplete && autocomplete.client_name ? autocomplete.client_name : [])
+            option(value=val)
+        datalist#brands-list
+          each val in (autocomplete && autocomplete.brand ? autocomplete.brand : [])
+            option(value=val)
+        datalist#car-types-list
+          each val in (autocomplete && autocomplete.car_type ? autocomplete.car_type : [])
+            option(value=val)
+        datalist#plates-list
+          each val in (autocomplete && autocomplete.plate_number ? autocomplete.plate_number : [])
+            option(value=val)
+        datalist#branches-list
+          each val in (autocomplete && autocomplete.branch ? autocomplete.branch : [])
+            option(value=val)
+        datalist#areas-list
+          each val in (autocomplete && autocomplete.area ? autocomplete.area : [])
+            option(value=val)
+        datalist#pics-list
+          each val in (autocomplete && autocomplete.pic ? autocomplete.pic : [])
+            option(value=val)
+
+  dialog#feasibilityModal.feasibility-modal
+    .feasibility-modal__header
+      h3.feasibility-modal__title Ajukan Feasibility Operational
+      button#closeFeasibilityModal.feasibility-modal__close(type='button' aria-label='Tutup modal') x
+    p#feasibilityClient.feasibility-modal__meta
+    form#feasibilityForm.feasibility-modal__form(method='post' action='')
+      .form-group
+        label(for='feasibility_note_modal') Catatan Feasibility
+        textarea#feasibility_note_modal(name='feasibility_note' placeholder='Isi analisa feasibility operational' required)
+      .feasibility-modal__actions
+        button(type='submit') Kirim Feasibility
+
+  script.
+    (function () {
+      const fields = document.querySelectorAll('input[data-rupiah="true"]');
+      const formatRupiah = (value) => {
+        const digits = String(value || '').replace(/\D/g, '');
+        if (!digits) return '';
+        return new Intl.NumberFormat('id-ID').format(Number(digits));
+      };
+
+      fields.forEach((field) => {
+        field.addEventListener('input', () => {
+          field.value = formatRupiah(field.value);
+        });
+
+        if (field.value) {
+          field.value = formatRupiah(field.value);
+        }
+      });
+    })();
+
+  script.
+    (function () {
+      const modal = document.getElementById('feasibilityModal');
+      const closeButton = document.getElementById('closeFeasibilityModal');
+      const form = document.getElementById('feasibilityForm');
+      const clientEl = document.getElementById('feasibilityClient');
+      const textarea = document.getElementById('feasibility_note_modal');
+      const triggers = document.querySelectorAll('.open-feasibility-modal');
+      if (!modal || !form || !clientEl || !textarea || !triggers.length) return;
+
+      triggers.forEach((button) => {
+        button.addEventListener('click', () => {
+          form.action = button.dataset.action || '';
+          clientEl.textContent = 'Client: ' + (button.dataset.client || '-');
+          textarea.value = '';
+          if (typeof modal.showModal === 'function') {
+            modal.showModal();
+          } else {
+            modal.setAttribute('open', 'open');
+          }
+        });
+      });
+
+      if (closeButton) {
+        closeButton.addEventListener('click', () => {
+          modal.close();
+        });
+      }
+
+      modal.addEventListener('click', (event) => {
+        const rect = modal.getBoundingClientRect();
+        const isBackdropClick =
+          event.clientX < rect.left ||
+          event.clientX > rect.right ||
+          event.clientY < rect.top ||
+          event.clientY > rect.bottom;
+        if (isBackdropClick) modal.close();
+      });
+    })();

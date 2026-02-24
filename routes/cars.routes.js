@@ -1,7 +1,7 @@
 const router = require('express').Router();
+const role = require('../middlewares/role.middleware');
 
-router.get('/', (req, res) => {
-  if (!req.session.user) return res.redirect('/login');
+router.get('/', role.only('super_admin'), (req, res) => {
   res.render('cars/list', { user: req.session.user });
 });
 

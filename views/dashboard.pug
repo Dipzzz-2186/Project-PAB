@@ -43,8 +43,11 @@ block content
                 .task-content
                   p.task-title= item.client_name
                   p.task-time Tahap saat ini: #{item.current_stage}
-                form(method='post' action=`/contracts/${item.id}/action/${item.action.actionKey}`)
-                  button(type='submit')= item.action.label
+                if item.action.actionKey === 'submit_feasibility' || item.action.actionKey === 'submit_feasibility_legacy'
+                  a.btn-secondary(href='/contracts') Isi Feasibility
+                else
+                  form(method='post' action=`/contracts/${item.id}/action/${item.action.actionKey}`)
+                    button(type='submit')= item.action.label
         else
           p.stats-change Tidak ada aksi yang menunggu role ini.
     .card
