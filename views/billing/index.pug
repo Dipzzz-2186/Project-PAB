@@ -1,0 +1,48 @@
+extends ../layout
+
+block page_config
+  - var activePage = 'billing'
+  - var searchPlaceholder = 'Cari billing...'
+
+block content
+  .page-header
+    h1.page-title Billing
+    p.page-subtitle Daftar kontrak yang sudah masuk area penagihan.
+
+  .grid.grid-cols-2(style='margin-bottom: 1rem;')
+    .card
+      .card-header
+        h3.card-title Kontrak Siap Billing
+      .card-content
+        .stats-value= totals.count
+    .card
+      .card-header
+        h3.card-title Nilai Billing
+      .card-content
+        .stats-value= 'Rp ' + totals.value.toLocaleString('id-ID')
+
+  .card
+    .card-header
+      h3.card-title Daftar Billing Kontrak
+    .card-content
+      .table-wrapper
+        table.report-table
+          thead
+            tr
+              th No
+              th Nomor Kontrak
+              th Client
+              th Tahap
+              th Nilai
+          tbody
+            if data && data.length
+              each row, idx in data
+                tr
+                  td= idx + 1
+                  td= row.contract_number
+                  td= row.client_name
+                  td= row.status
+                  td= 'Rp ' + row.price.toLocaleString('id-ID')
+            else
+              tr
+                td(colspan='5' style='text-align:center; padding:1.5rem; color:#9ca3af;') Belum ada kontrak untuk billing

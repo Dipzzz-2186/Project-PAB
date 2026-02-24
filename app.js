@@ -28,6 +28,10 @@ app.use('/dashboard', require('./routes/dashboard.routes'));
 app.use('/contracts', require('./routes/contract.routes'));
 app.use('/clients', require('./routes/clients.routes'));
 app.use('/cars', require('./routes/cars.routes'));
+app.use('/vendors', require('./routes/vendors.routes'));
+app.use('/reports', require('./routes/reports.routes'));
+app.use('/billing', require('./routes/billing.routes'));
+app.use('/settings', require('./routes/settings.routes'));
 
 const { sequelize } = require('./models');
 

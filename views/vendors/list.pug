@@ -1,0 +1,36 @@
+extends ../layout
+
+block page_config
+  - var activePage = 'vendors'
+  - var searchPlaceholder = 'Cari vendor...'
+
+block content
+  .page-header
+    h1.page-title List Vendor
+    p.page-subtitle Ringkasan vendor berdasarkan kontrak yang sudah tercatat.
+
+  .card
+    .card-header
+      h3.card-title Daftar Vendor
+    .card-content
+      .table-wrapper
+        table.report-table
+          thead
+            tr
+              th No
+              th Nama Vendor
+              th Jumlah Kontrak
+              th Total Unit
+              th Client Terakhir
+          tbody
+            if data && data.length
+              each row, idx in data
+                tr
+                  td= idx + 1
+                  td= row.name
+                  td= row.totalContracts
+                  td= row.totalUnits
+                  td= row.latestClient
+            else
+              tr
+                td(colspan='5' style='text-align:center; padding:1.5rem; color:#9ca3af;') Belum ada data vendor

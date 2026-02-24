@@ -1,0 +1,54 @@
+extends ../layout
+
+block page_config
+  - var activePage = 'reports'
+  - var searchPlaceholder = 'Cari laporan...'
+
+block content
+  .page-header
+    h1.page-title Reports
+    p.page-subtitle Ringkasan performa workflow kontrak per tahap.
+
+  .grid.grid-cols-4(style='margin-bottom: 1rem;')
+    .card
+      .card-header
+        h3.card-title Total Kontrak
+      .card-content
+        .stats-value= totals.all
+    .card
+      .card-header
+        h3.card-title Kontrak Berjalan
+      .card-content
+        .stats-value= totals.active
+    .card
+      .card-header
+        h3.card-title Selesai
+      .card-content
+        .stats-value= totals.completed
+    .card
+      .card-header
+        h3.card-title Nilai Total
+      .card-content
+        .stats-value= 'Rp ' + totals.value.toLocaleString('id-ID')
+
+  .card
+    .card-header
+      h3.card-title Distribusi Tahap Workflow
+    .card-content
+      .table-wrapper
+        table.report-table
+          thead
+            tr
+              th Tahap
+              th Lane
+              th Jumlah Kontrak
+          tbody
+            if stageRows && stageRows.length
+              each row in stageRows
+                tr
+                  td= row.label
+                  td= row.lane
+                  td= row.total
+            else
+              tr
+                td(colspan='3' style='text-align:center; padding:1.5rem; color:#9ca3af;') Belum ada data kontrak

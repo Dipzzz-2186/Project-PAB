@@ -1,0 +1,35 @@
+extends ../layout
+
+block page_config
+  - var activePage = 'settings'
+  - var searchPlaceholder = 'Cari pengaturan...'
+
+block content
+  .page-header
+    h1.page-title Settings
+    p.page-subtitle Pengaturan akun dan preferensi aplikasi.
+
+  .grid.grid-cols-2
+    .card
+      .card-header
+        h3.card-title Profil Akun
+      .card-content
+        .form-group
+          label Nama
+          input(type='text' value=user.name readonly)
+        .form-group
+          label Email
+          input(type='email' value=user.email readonly)
+        .form-group
+          label Role
+          input(type='text' value=user.role readonly)
+    .card
+      .card-header
+        h3.card-title Pengaturan Sistem
+      .card-content
+        p(style='margin-bottom: .75rem;') Placeholder untuk:
+        ul.workflow-list
+          li Ganti password
+          li Notifikasi email
+          li Integrasi approval workflow
+          li Pengaturan SLA per role
